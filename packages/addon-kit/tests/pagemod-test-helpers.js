@@ -37,12 +37,13 @@ exports.testPageMod = function testPageMod(test, testURL, pageModOptions,
     tabBrowser.selectedTab = newTab;
     var b = newTab.browser || tabBrowser.getBrowserForTab(newTab);
 
+
     function onPageLoad() {
       b.removeEventListener("load", onPageLoad, true);
       testCallback(b.contentWindow.wrappedJSObject, function done() {
         pageMods.forEach(function(mod) {pageMod.remove(mod)});
         // XXX leaks reported if we don't close the tab?
-        tabBrowser.removeTab(newTab);
+        newTab.destroy ? newTab.destroy() : tabBrowser.removeTab(newTab);
         test.done();
       });
     }
